@@ -7,21 +7,19 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3) 
+    char *filename = argv[1];
+    char *writestr = argv[2];
+    openlog("writer", 0, LOG_USER);
+
+    if(filename == NULL || writestr == NULL)
     {
+        syslog(LOG_ERR, "No Filename or Write String Specified");
         fprintf(stderr, "Usage: %s <filename> <writestr>\n", argv[0]);
         return EXIT_FAILURE;
     }
-    else if(argv[2] == NULL)
-    {
-        fprintf(stderr, "No Write String Specified\n");
-        return EXIT_FAILURE;
-    }
-    char *filename = argv[1];
-    char *writestr = argv[2];
+    
     int fd  = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0700);
     
-    openlog("writer", 0, LOG_USER);
     if (fd == -1) 
     {
         syslog(LOG_ERR, "Failed to open file: %s", filename);
