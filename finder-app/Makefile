@@ -74,8 +74,8 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
 	size $@
 
-$(TARGET).asm : $(TARGET).out
-	objdump -s $(TARGET).out
+$(TARGET).asm : $(TARGET)
+	objdump -s $(TARGET)
 
 print:
 	@echo CC=$(CC)
