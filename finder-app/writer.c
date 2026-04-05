@@ -11,12 +11,19 @@ int main(int argc, char *argv[])
     char *writestr = argv[2];
     openlog("writer", 0, LOG_USER);
 
-    if(filename == NULL || writestr == NULL)
+    if(filename == NULL && writestr == NULL)
     {
         syslog(LOG_ERR, "No Filename or Write String Specified");
         fprintf(stderr, "Usage: %s <filename> <writestr>\n", argv[0]);
         return EXIT_FAILURE;
     }
+    else if(filename != NULL && writestr == NULL)
+    {
+        syslog(LOG_ERR, "No Write String Specified");
+        fprintf(stderr, "Usage: %s <filename> <writestr>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+   
     
     int fd  = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0700);
     
