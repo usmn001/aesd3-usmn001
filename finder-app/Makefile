@@ -16,43 +16,13 @@ TARGET = writer
 LDFLAGS += -Wl,-Map=$(TARGET).map				
 DEPFLAGS = -MD 			
 
-ifeq ($(CROSS_COMPILE),aarch64-none-linux-gnu-)
-CC = aarch64-none-linux-gnu-gcc
-# Architectures Specific Flags
-LD = aarch64-none-linux-gnu-ld
+CROSS_COMPILE ?=
+CC := $(CROSS_COMPILE)gcc
 
-else	
-
-# Compiler Flags and Defines
-CC = gcc
-LD = ld
+ifeq ($(CROSS_COMPILE),)
 CFLAGS += -DHOST
-
 endif
-
-
-#Generating Dependency Files For Each Source file
-
-%.d : %.c
-	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
-DEP = $(SOURCES:.c=.d)	
-
-
-# Generating Preprocessed Output Of Each Source File
-
-%.i : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGs) $< -o $@ 
-
-PREP = $(SOURCES:.c=.i)
-
-
-# Generating Required Assembly Files For Each Source File
-
-%.asm : %.c
-	$(CC) $(CFLAGS) -S $<  
-
-ASM = $(SOURCES:.c=.asm)
-        
+      
 # Generating Required Object Files For Each Source File
 
 %.o : %.c
