@@ -17,9 +17,18 @@ bool do_system(const char *cmd)
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
-bool status = true;
-status = system(cmd);
-return status;
+bool error = true;
+int status = system(cmd);
+if(status == -1)
+{
+    error = false;
+}
+else
+{
+    error = true;
+}
+
+return error;
 }
 
 /**
