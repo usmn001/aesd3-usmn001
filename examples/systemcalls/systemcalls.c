@@ -1,5 +1,6 @@
 #include "systemcalls.h"
-
+#include <unistd.h>
+#include <stdlib.h>
 /**
  * @param cmd the command to execute with system()
  * @return true if the command in @param cmd was executed
@@ -16,8 +17,9 @@ bool do_system(const char *cmd)
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
-
-    return true;
+bool status = true;
+status = system(cmd);
+return status;
 }
 
 /**
@@ -58,10 +60,22 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+    bool error = true;
+
+    int status = execv(command[0], command);
 
     va_end(args);
 
-    return true;
+    if(status == -1)
+    {
+        error = false;
+    }
+    else
+    {
+        error = true;
+    }
+
+    return error;
 }
 
 /**
