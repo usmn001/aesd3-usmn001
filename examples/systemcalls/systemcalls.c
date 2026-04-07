@@ -73,10 +73,12 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+   int wstatus = 0;
+   int err_status = false;
    pid_t pid = fork();
    if(pid == -1)
    {
-        return false;
+        err_status = false;
    }
    else if(pid == 0)
    {
@@ -84,20 +86,15 @@ bool do_exec(int count, ...)
        exit(EXIT_FAILURE);
    }
     
-    int wstatus = 0;
-   
-
-    if(waitpid(pid, &wstatus, 0) == -1)
-    {
-        return false;
-    }
-    else if(WIFEXITED(wstatus) && WEXITSTATUS(wstatus) == 0)
-    {
-       return true;
-    }
-   
-
-    return false;
+   if(waitpid(pid, &wstatus, 0) == -1)
+   {
+        err_status = false;
+   }
+   else if(WIFEXITED(wstatus) && WEXITSTATUS(wstatus) == 0)
+   {
+       err_status = true;
+   }
+   return err_status;
 }
 
 /**
@@ -128,18 +125,21 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *   The rest of the behaviour is same as do_exec()
  *
 */
-   int fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    int err_status = false;
+    int wstatus = 0;
+
+    int fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (fd < 0)
     {
-        return false;
+        err_status = false;
     }
 
     pid_t pid = fork();
 
     if (pid < 0)
     {
-        close(fd);
-        return false;
+        //close(fd);
+        err_status = false;
     }
 
     else if (pid == 0)
@@ -154,15 +154,18 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
         close(fd);
 
         execv(command[0], command);
-
         _exit(1); // exec failed
     }
+    
+    if(waitpid(pid, &wstatus, 0) == -1)
+    {
+        err_status = false;
+    }
+    else if(WIFEXITED(wstatus) && WEXITSTATUS(wstatus) == 0)
+    {
+       err_status = true;
+    }
+   
+   return err_status;
 
-    // parent
-    close(fd);
-
-    int status;
-    waitpid(pid, &status, 0);
-
-    return WIFEXITED(status) && WEXITSTATUS(status) == 0;
 }
