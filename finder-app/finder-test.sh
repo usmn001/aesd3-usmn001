@@ -49,7 +49,7 @@ then
 	fi
 fi
 #echo "Removing the old writer utility and compiling as a native application"
-
+#for commit
 
 for i in $( seq 1 $NUMFILES)
 do
