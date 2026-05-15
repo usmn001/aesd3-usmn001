@@ -48,7 +48,7 @@ void termination_handler(int signum)
 {
    
 	exit_requested = -1;
-	printf("Received Termination Signal\n ");
+	//printf("Received Termination Signal\n ");
 	syslog(LOG_DEBUG,"Caught signal, exiting");
 }
 
@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
 
 	int socket_desc = 0; 
 	int client_sock = 0; 
-	socklen_t clientLen = 0;
 	int s = 0;
 	
 	char msg_from_client[1024] = {0};
@@ -112,7 +111,7 @@ int main(int argc, char *argv[])
 
 	if(socket_desc!=-1)
 	{
-		printf("SOCKET CREATED SUCCESSFULLY\n");
+		//printf("SOCKET CREATED SUCCESSFULLY\n");
 		syslog(LOG_DEBUG,"SOCKET DONE");
 	}
 
@@ -120,7 +119,7 @@ int main(int argc, char *argv[])
 	{
         syslog(LOG_DEBUG,"BIND FAILED");
 	}
-	printf("BIND DONE SUCCESSFULLY\n");
+	//printf("BIND DONE SUCCESSFULLY\n");
 	syslog(LOG_DEBUG,"BIND DONE");
 	freeaddrinfo(res);	
 
@@ -157,6 +156,7 @@ if(argc==2 && strcmp(mode,"-d")==0)
 	    syslog(LOG_DEBUG, "Waiting for a Connection");        
 
 	    // Accept connection from an incoming client_addr, accept is returning a new socket descriptor
+		socklen_t clientLen = sizeof(client_addr);
 	    client_sock = accept(socket_desc,(struct sockaddr *)&client_addr,&clientLen);
 		
 		if(client_sock<0)
@@ -172,7 +172,7 @@ if(argc==2 && strcmp(mode,"-d")==0)
 		if(s==0)
 		{
 			syslog(LOG_DEBUG, "Accepted Connection From Client %s",client_ip);
-			printf("Connection Accepted From Client %s \n",client_ip);
+			//printf("Connection Accepted From Client %s \n",client_ip);
 		}
 
         int fd  = open(filename, O_RDWR | O_CREAT | O_APPEND, 0700);
@@ -202,7 +202,7 @@ if(argc==2 && strcmp(mode,"-d")==0)
 			else if(recv_bytes>0)
         	{
 				syslog(LOG_DEBUG, "Received %zu Bytes From Client %s", recv_bytes,client_ip);
-				printf("Total %zu Bytes Received From Client %s \n", recv_bytes,client_ip);
+				//printf("Total %zu Bytes Received From Client %s \n", recv_bytes,client_ip);
 			}
 			else if(recv_bytes==0)
 			{
@@ -233,7 +233,7 @@ if(argc==2 && strcmp(mode,"-d")==0)
 					syslog(LOG_ERR,"Write To File Failed With Error %s",strerror(errno));	
 				} 
 				syslog(LOG_DEBUG,"Writing %zu Bytes To File %s",wr_data,filename);
-				printf("Writing %zu Bytes To File %s\n",wr_data,filename);
+				//printf("Writing %zu Bytes To File %s\n",wr_data,filename);
 				break;
 			}	      
 		}
@@ -250,13 +250,13 @@ if(argc==2 && strcmp(mode,"-d")==0)
 			if(rd_data==-1)
 			{
 				syslog(LOG_ERR,"Reading file has failed with %s",strerror(errno));
-				printf("Reading file has failed with %s\n",strerror(errno));
+				//printf("Reading file has failed with %s\n",strerror(errno));
 				exit(EXIT_FAILURE);
 			}
 			else if(rd_data==0)
 			{
 				syslog(LOG_DEBUG,"Reached the end of file");
-				printf("Reached the end of file \n");
+				//printf("Reached the end of file \n");
 			}
 			else if(rd_data>0)
 			{
@@ -275,8 +275,8 @@ if(argc==2 && strcmp(mode,"-d")==0)
 				}
 				else if(sent_data>0)
 				{
-					printf("\nSent %zu Data Bytes To Client\n",sent_data);
-                	syslog(LOG_DEBUG,"Sent %zu Data Bytes To Client",sent_data);
+					//printf("\nSent %zu Data Bytes To Client\n",sent_data);
+                    syslog(LOG_DEBUG,"Sent %zu Data Bytes To Client",sent_data);
 				}
 				total_sent_data +=sent_data;
 			}	
