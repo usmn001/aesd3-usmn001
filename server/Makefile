@@ -1,7 +1,7 @@
 #******************************************************************************
 # 
 # Supports: 
-# make CROSS_COMPILE=aarch64-none-linux-gnu
+# make CROSS_COMPILE=aarch64-none-linux-gnu-
 # make compile-all
 # make clean
 #

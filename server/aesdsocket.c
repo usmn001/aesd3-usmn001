@@ -68,13 +68,13 @@ int main(int argc, char *argv[])
     
     if (sigaction(SIGINT, &new_action, NULL) == -1) 
 	{
-        perror("Error setting up signal handler");
+        syslog(LOG_ERR, "Error setting up signal handler");
         return 1;
     }
     
 	if (sigaction(SIGTERM, &new_action, NULL) == -1) 
 	{
-        perror("Error setting up signal handler");
+        syslog(LOG_ERR, "Error setting up signal handler");
         return 1;
     }
 
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 	if(s!=0)
 	{
 		 syslog(LOG_ERR, "getaddrinfo: %s",gai_strerror(s));
-		 perror("Get addrinfo failed");
+		 syslog(LOG_ERR, "Get addrinfo failed");
 		 exit(EXIT_FAILURE);
 	}
     socket_desc = socketCreate(res);
@@ -142,9 +142,10 @@ if(argc==2 && strcmp(mode,"-d")==0)
 
         if(setsid()<0)   //Child Process creates a session and sets the process group ID
 		{
-			syslog(LOG_ERR,"setsid() failed"); 
+			syslog(LOG_ERR,"setsid() failed with error %s",strerror(errno)); 
 			exit(EXIT_FAILURE);
 		}
+		syslog(LOG_DEBUG,"Daemon Mode Enabled");
 		close(STDIN_FILENO);         // scanf and other statements won´t work in daemon child process.
     	close(STDOUT_FILENO);        // printf will not work in daemon child process.
     	close(STDERR_FILENO);        // perror statement will not work in daemon child process.
